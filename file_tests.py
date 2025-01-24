@@ -22,6 +22,7 @@ def main():
     print(result)
 
     test_string = "Hello, world!"
+    test_list = ["apple", "banana", "cherry"]
     test_list_of_lists = [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]]
     test_list_of_dicts = [{"name": "John", "age": 30, "city": "New York"}, {"name": "Jane", "age": 25, "city": "Los Angeles"}]
     test_dict = {"name": "John", "age": 30, "city": "New York"}
@@ -40,7 +41,7 @@ def main():
     result = txt_file.read()
     print(result)
     # Тест на добавление данных в файл
-    json_file.append(test_dict_2)
+    json_file.append(test_list)
     csv_file.append(test_list_of_lists)
     txt_file.append(test_string)
 

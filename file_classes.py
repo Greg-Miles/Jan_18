@@ -71,17 +71,30 @@ class JsonFile(AbstractFile):
         Метод для добавления данных в файл формата JSON.
         :param data: Данные для добавления в файл.
         """
-        with open(self.file_path, 'r', encoding='utf-8') as file:
-            json_data = json.load(file)
-            if isinstance(data, dict):
-                json_data.update(data)
-            elif isinstance(data, list):
-                json_data.extend(data)
-            else:
-                raise TypeError("Неподдерживаемый тип данных для добавления.")
-
+        # Initialize empty structure if file doesn't exist
+        json_data = {} if isinstance(data, dict) else []
+        
+        # Try to read existing data if file exists
+        try:
+            with open(self.file_path, 'r', encoding='utf-8') as file:
+                json_data = json.load(file)
+                
+            # Check compatibility
+            if isinstance(json_data, dict) and not isinstance(data, dict):
+                raise TypeError("Можно добавлять только словарь к существующему словарю")
+            if isinstance(json_data, list) and not isinstance(data, list):
+                raise TypeError("Можно добавлять только список к существующему списку")
+                
+        except FileNotFoundError:
+            pass
+            
+        if isinstance(data, dict):
+            json_data.update(data)
+        elif isinstance(data, list):
+            json_data.extend(data)
+        
+        with open(self.file_path, 'w', encoding='utf-8') as file:
             json.dump(json_data, file, indent=4, ensure_ascii=False)
-
 
 class CsvFile(AbstractFile):
     """
@@ -106,7 +119,7 @@ class CsvFile(AbstractFile):
         except FileNotFoundError:
             return []
 
-    def write(self, data)->None:
+    def write(self, data: list)->None:
         """
         Метод для записи данных в файл формата CSV.
         :param data: Данные для записи в файл.
@@ -123,7 +136,7 @@ class CsvFile(AbstractFile):
                 writer = csv.writer(file, delimiter=';', lineterminator='\n')
                 writer.writerows(data)
 
-    def append(self, data)->None:
+    def append(self, data: list)->None:
         """
         Метод для добавления данных в файл формата CSV.
         :param data: Данные для добавления в файл.
