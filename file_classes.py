@@ -6,7 +6,7 @@ class AbstractFile(ABC):
     Родительский класс для работы с файлами.
     """
 
-    def __init__(self)->None:
+    def __init__(self, file_path: str)->None:
         """
         Конструктор родительского класса.
         """
@@ -84,3 +84,46 @@ class JsonFile(AbstractFile):
 
         with open('data.json', 'w', encoding='utf-8') as file:
             json.dump(json_data, file, indent=4, ensure_ascii=False)
+
+
+class CsvFile(AbstractFile):
+    """
+    Метод-наследник для работы с файлами формата CSV.
+    """
+    def __init__(self, file_path: str)->None:
+        """
+        Конструктор класса CsvFile.
+        :param file_path: Путь к файлу.
+        """
+        super().__init__(file_path)
+    
+    def read(self)->list:
+        """
+        Метод для чтения данных из файла формата CSV.
+        :return: Список с данными из файла.
+        """
+        try:
+            with open(self.file_path, 'r', encoding='utf-8') as file:
+                reader = csv.reader(file)
+                return list(reader)
+        except FileNotFoundError:
+            return []
+
+    def write(self, data)->None:
+        """
+        Метод для записи данных в файл формата CSV.
+        :param data: Данные для записи в файл.
+        """
+        with open(self.file_path, 'w', encoding='utf-8') as file:
+            writer = csv.writer(file, delimiter=';', lineterminator='\n')
+            writer.writerows(data)
+
+    def append(self, data)->None:
+        """
+        Метод для добавления данных в файл формата CSV.
+        :param data: Данные для добавления в файл.
+        """
+        with open(self.file_path, 'a', encoding='utf-8') as file:
+            writer = csv.writer(file, delimiter=';', lineterminator='\n')
+            writer.writerows(data)
+
