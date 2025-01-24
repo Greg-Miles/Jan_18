@@ -71,15 +71,15 @@ class JsonFile(AbstractFile):
         Метод для добавления данных в файл формата JSON.
         :param data: Данные для добавления в файл.
         """
-        # Initialize empty structure if file doesn't exist
+        # Создаём пустой словарь или список на случай если файл пустой или не существует
         json_data = {} if isinstance(data, dict) else []
         
-        # Try to read existing data if file exists
+        # пытаемся загрузить данные из файла
         try:
             with open(self.file_path, 'r', encoding='utf-8') as file:
                 json_data = json.load(file)
                 
-            # Check compatibility
+            # проверяем что данные в файле и данные для записи одного типа
             if isinstance(json_data, dict) and not isinstance(data, dict):
                 raise TypeError("Можно добавлять только словарь к существующему словарю")
             if isinstance(json_data, list) and not isinstance(data, list):
