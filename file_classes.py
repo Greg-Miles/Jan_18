@@ -11,7 +11,7 @@ class AbstractFile(ABC):
         Конструктор родительского класса.
         """
         self.file_path = file_path
-        self.file = self.open()
+
         
     @abstractmethod
     def read(self):
@@ -126,4 +126,43 @@ class CsvFile(AbstractFile):
         with open(self.file_path, 'a', encoding='utf-8') as file:
             writer = csv.writer(file, delimiter=';', lineterminator='\n')
             writer.writerows(data)
+
+
+class TxtFile(AbstractFile):
+    """
+    Метод-наследник для работы с файлами формата TXT.
+    """
+    def __init__(self, file_path: str)->None:
+        """
+        Конструктор класса TxtFile.
+        :param file_path: Путь к файлу.
+        """
+        super().__init__(file_path)
+    
+    def read(self)->str:
+        """
+        Метод для чтения данных из файла формата TXT.
+        :return: Строка с данными из файла.
+        """
+        try:
+            with open(self.file_path, 'r', encoding='utf-8') as file:
+                return file.read()
+        except FileNotFoundError:
+            return ""
+        
+    def write(self, data)->None:
+        """
+        Метод для записи данных в файл формата TXT.
+        :param data: Данные для записи в файл.
+        """
+        with open(self.file_path, 'w', encoding='utf-8') as file:
+            file.write(data)
+
+    def append(self, data)->None:
+        """
+        Метод для добавления данных в файл формата TXT.
+        :param data: Данные для добавления в файл.
+        """
+        with open(self.file_path, 'a', encoding='utf-8') as file:
+            file.write(data)
 
