@@ -56,7 +56,7 @@ class JsonFile(AbstractFile):
             with open(self.file_path, 'r',encoding="utf-8") as file:
                 return json.load(file)
         except FileNotFoundError:
-                return {}
+            return {}
         
     def write(self, data)->None:
         """
@@ -73,16 +73,13 @@ class JsonFile(AbstractFile):
         """
         with open(self.file_path, 'r', encoding='utf-8') as file:
             json_data = json.load(file)
-            
+            if isinstance(data, dict):
+                json_data.update(data)
+            elif isinstance(data, list):
+                json_data.extend(data)
+            else:
+                raise TypeError("Неподдерживаемый тип данных для добавления.")
 
-        if isinstance(data, dict):
-            json_data.update(data)
-        elif isinstance(data, list):
-            json_data.extend(data)
-        else:
-            raise TypeError("Неподдерживаемый тип данных для добавления.")
-
-        with open('data.json', 'w', encoding='utf-8') as file:
             json.dump(json_data, file, indent=4, ensure_ascii=False)
 
 
@@ -115,8 +112,16 @@ class CsvFile(AbstractFile):
         :param data: Данные для записи в файл.
         """
         with open(self.file_path, 'w', encoding='utf-8') as file:
-            writer = csv.writer(file, delimiter=';', lineterminator='\n')
-            writer.writerows(data)
+            if isinstance(data[0], dict):
+                # Если данные - список словарей
+                fieldnames = data[0].keys()
+                writer = csv.DictWriter(file, fieldnames=fieldnames,lineterminator='\n',delimiter=';')
+                writer.writeheader()
+                writer.writerows(data)
+            elif isinstance(data[0], list):
+                # Если данные - список списков
+                writer = csv.writer(file, delimiter=';', lineterminator='\n')
+                writer.writerows(data)
 
     def append(self, data)->None:
         """
